@@ -1,6 +1,7 @@
 /** Change these site-wide values here before deployment. */
 export const SITE_NAME = 'EMICalc Pro';
-export const DOMAIN = 'https://emicalcpro.example';
+/** Set NEXT_PUBLIC_SITE_URL at build time to the Pages URL or your custom domain. */
+export const DOMAIN = process.env.NEXT_PUBLIC_SITE_URL || 'https://emicalcpro.example';
 /** Normalized origin for canonical, sitemap, and structured-data URLs. */
 export const SITE_ORIGIN = DOMAIN.replace(/\/+$/, '');
 export const CONTACT_EMAIL = 'hello@emicalcpro.example';
