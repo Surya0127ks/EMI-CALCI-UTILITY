@@ -77,6 +77,12 @@ export function Calculator({ preset = defaults }: { preset?: CalculatorPreset })
 
   function handleCalculate() {
     setHasCalculated(true);
+    // On mobile, gently center the result panel on screen so user sees it instantly
+    setTimeout(() => {
+      if (resultRef.current && window.innerWidth <= 860) {
+        resultRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }, 80);
   }
 
   function downloadCsv() {
