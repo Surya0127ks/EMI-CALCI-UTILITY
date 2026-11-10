@@ -3,8 +3,8 @@ import { Calculator } from '@/components/calculator';
 import { Article, type Faq, type Section } from '@/components/content';
 import { metadataFor, structuredData } from '@/lib/seo';
 const title = 'Home Loan EMI Calculator';
-const description = 'Estimate home loan EMI, total interest and repayment schedule. Compare home financing scenarios and explore how prepayments can change the cost.';
-export const metadata: Metadata = metadataFor(`${title}: Monthly Payment & Interest`, description, '/home-loan-emi-calculator/');
+const description = 'Free home loan EMI calculator India. Calculate monthly home loan EMI, total interest payable and full amortization schedule. Compare home loan scenarios and prepayment savings instantly.';
+export const metadata: Metadata = metadataFor(`${title} — Calculate Monthly EMI Free`, description, '/home-loan-emi-calculator/');
 const faq: Faq[] = [
   { q: 'How much home loan can I afford?', a: 'Start with a payment that fits comfortably after essential expenses, savings and other debt. A lender also assesses income, credit and its own affordability criteria.' },
   { q: 'Does a home loan EMI include taxes and insurance?', a: 'Usually an EMI estimate covers principal and interest only. Property taxes, home insurance, association fees and lender charges may be additional.' },

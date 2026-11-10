@@ -3,8 +3,8 @@ import { Calculator } from '@/components/calculator';
 import { Article, type Faq, type Section } from '@/components/content';
 import { metadataFor, structuredData } from '@/lib/seo';
 const title = 'Car Loan EMI Calculator';
-const description = 'Calculate an estimated car loan EMI, total interest and monthly repayment schedule. Compare loan terms and down-payment scenarios.';
-export const metadata: Metadata = metadataFor(`${title}: Estimate Car Payments`, description, '/car-loan-emi-calculator/');
+const description = 'Free car loan EMI calculator India. Calculate monthly car loan EMI, total interest and amortization schedule. Compare vehicle loan terms and down-payment scenarios instantly.';
+export const metadata: Metadata = metadataFor(`${title} — Calculate Car EMI Free`, description, '/car-loan-emi-calculator/');
 const faq: Faq[] = [
   { q: 'Should I enter the car price or loan amount?', a: 'Enter the amount you plan to borrow after the down payment. Add-on products or financed fees may change the principal.' },
   { q: 'Are running costs included in the EMI?', a: 'No. Fuel, maintenance, registration, taxes and insurance are separate ownership costs. Budget for them in addition to installments.' },

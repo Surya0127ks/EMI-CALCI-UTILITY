@@ -3,8 +3,8 @@ import { Calculator } from '@/components/calculator';
 import { Article, type Faq, type Section } from '@/components/content';
 import { metadataFor, structuredData } from '@/lib/seo';
 const title = 'Personal Loan EMI Calculator';
-const description = 'Estimate a personal loan EMI, total interest and amortization schedule. Compare borrowing amounts, rates, repayment periods and prepayments.';
-export const metadata: Metadata = metadataFor(`${title}: Monthly Payment & Cost`, description, '/personal-loan-emi-calculator/');
+const description = 'Free personal loan EMI calculator India. Calculate monthly personal loan EMI, total interest and amortization schedule. Compare borrowing amounts, rates and repayment periods instantly.';
+export const metadata: Metadata = metadataFor(`${title} — Calculate Personal Loan EMI Free`, description, '/personal-loan-emi-calculator/');
 const faq: Faq[] = [
   { q: 'What amount should I enter?', a: 'Enter the principal you expect to receive or repay. Check whether the lender deducts fees from disbursement or adds them to the balance.' },
   { q: 'Why can personal loan rates be higher?', a: 'Rates depend on lender policy, borrower profile, term and product risk. Compare written offers and the effective total cost.' },
