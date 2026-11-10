@@ -446,6 +446,7 @@ input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer
    ========================================================================== */
 .result-column {
   min-height: 360px;
+  scroll-margin-top: 105px;
 }
 .result-placeholder {
   height: 100%;

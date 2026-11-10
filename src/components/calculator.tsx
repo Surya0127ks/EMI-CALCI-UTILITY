@@ -88,12 +88,16 @@ export function Calculator({ preset = defaults }: { preset?: CalculatorPreset })
 
   function handleCalculate() {
     setHasCalculated(true);
-    // On mobile, smoothly glide the result panel into view just below the sticky header
+    // On mobile, smoothly bring the entire result card cleanly into view below the sticky header
     setTimeout(() => {
       if (resultRef.current && window.innerWidth <= 860) {
-        resultRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        const header = document.querySelector('.site-header');
+        const headerHeight = header ? header.getBoundingClientRect().height : 85;
+        const rect = resultRef.current.getBoundingClientRect();
+        const targetScrollY = window.scrollY + rect.top - headerHeight - 14;
+        window.scrollTo({ top: Math.max(0, targetScrollY), behavior: 'smooth' });
       }
-    }, 50);
+    }, 60);
   }
 
   function downloadCsv() {
