@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { Calculator } from '@/components/calculator';
 import { Article, type Faq, type Section } from '@/components/content';
 import { metadataFor, structuredData } from '@/lib/seo';
@@ -21,4 +22,31 @@ const sections: Section[] = [
   { title: 'Rates, tenure and the real cost', paragraphs: ['A higher rate increases the installment and the interest share of each payment. Compare the rate type, reset frequency, benchmark and any introductory period; a promotional starting rate may not last through the full term. A small rate difference repeated over many years can produce a large total-cost difference.', 'A longer tenure generally reduces the required installment by spreading principal over more months, but it keeps a balance outstanding for longer. Compare both monthly affordability and total interest. A shorter term can save interest but should leave enough cash flow for maintenance, emergency savings and changing household needs.', 'Ask for the lender’s annual percentage or effective borrowing cost, not just a headline rate. Processing charges, valuation costs, mortgage registration, required insurance and payment timing may affect the true cost. A reducing-balance rate applies interest to outstanding principal. A flat-rate calculation uses the original principal throughout and is not directly comparable at the same quoted percentage.'] },
   { title: 'Use prepayments thoughtfully', paragraphs: ['An occasional extra payment can bring down principal sooner and therefore reduce the interest charged in later periods. Use the extra-payment fields to model a monthly addition or a one-time contribution. The result illustrates possible interest savings and term reduction if the amount is applied straight to principal and no fees or limits apply.', 'Before prepaying, request the lender’s rules: minimum amount, notice process, annual caps, charges, and whether the lender shortens tenure or recalculates the EMI. Compare the interest benefit with keeping accessible savings, paying higher-rate debt, and any tax treatment relevant in your location. A faster payoff is not automatically the best choice if it leaves too little emergency cash.', 'For a practical comparison, save the original schedule and run one change at a time: a bigger down payment, a slightly lower rate, a shorter term or a regular extra payment. The table and CSV help you see how principal and interest evolve. Confirm the final numbers against an official amortization schedule before signing or changing a loan.'] }
 ];
-export default function HomeLoanPage() { const schema = structuredData('/home-loan-emi-calculator/', title, description, faq); return <><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} /><section className="page-hero"><div className="page-hero-inner"><span className="eyebrow">HOME FINANCING, MADE CLEAR</span><h1>Home Loan EMI Calculator</h1><p>Estimate your monthly home loan payment, understand the long-term interest and explore repayment options before you make a plan.</p><div className="page-badges"><span>Principal + interest estimate</span><span>Private in-browser calculations</span></div></div></section><div className="main-wrap"><Calculator preset={{ amount: 5000000, rate: 8, years: 20, currency: 'INR' }} /><Article title="A practical guide to home loan EMI" sections={sections} faq={faq} /></div></>; }
+export default function HomeLoanPage() {
+  const schema = structuredData('/home-loan-emi-calculator/', title, description, faq);
+  return (
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
+      <div className="utility-top-bar">
+        <div className="utility-top-inner">
+          <div className="tool-title-group">
+            <h1>Home Loan EMI Calculator</h1>
+            <p>Calculate your home loan EMI, total interest payable and repayment schedule.</p>
+          </div>
+          <div className="loan-type-tabs" role="tablist" aria-label="Loan types">
+            <Link href="/" className="loan-tab">All Loans</Link>
+            <Link href="/home-loan-emi-calculator/" className="loan-tab active" aria-selected="true">Home Loan</Link>
+            <Link href="/car-loan-emi-calculator/" className="loan-tab">Car Loan</Link>
+            <Link href="/personal-loan-emi-calculator/" className="loan-tab">Personal Loan</Link>
+          </div>
+        </div>
+      </div>
+      <div className="main-wrap">
+        <div className="calculator-wrapper">
+          <Calculator preset={{ amount: 5000000, rate: 8.5, years: 20, currency: 'INR' }} />
+        </div>
+        <Article title="A practical guide to home loan EMI" sections={sections} faq={faq} />
+      </div>
+    </>
+  );
+}

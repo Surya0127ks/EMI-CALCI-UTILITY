@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { Calculator } from '@/components/calculator';
 import { Article, type Faq, type Section } from '@/components/content';
 import { metadataFor, structuredData } from '@/lib/seo';
@@ -21,4 +22,31 @@ const sections: Section[] = [
   { title: 'Compare offers beyond the advertised payment', paragraphs: ['A lender may advertise a low installment by using a longer repayment period. That can help monthly cash flow while adding more interest over time. Compare total repayment as well as the EMI, and evaluate the payment against your budget after rent, essentials, existing debts, savings and irregular costs.', 'Rates can depend on credit history, income, loan purpose, amount and repayment length. Compare written offers from appropriate lenders and look beyond the headline percentage: origination fees, late charges, required add-on products and early repayment conditions all matter. Make sure you understand whether the quoted rate is fixed for the term or can change.', 'With a reducing-balance loan, interest is charged against remaining principal. A flat-rate product can charge against the original principal for the full term, so the nominal rate cannot be compared directly with a reducing-balance rate. Ask for the total amount payable and a month-by-month schedule. Do not borrow based solely on a calculator output or a pre-approved marketing message.'] },
   { title: 'Prepayment and responsible borrowing', paragraphs: ['Paying extra toward principal can reduce the balance used to calculate future interest. Explore a regular additional amount or one-time payment in the calculator to see an illustrative saving and payoff time. The model assumes the extra payment is accepted in full as principal. Your lender may instead set minimum amounts, charge a settlement fee, limit partial repayments or change the installment rather than the term.', 'Borrowing only the amount needed is usually the clearest way to reduce cost. Before using a personal loan to consolidate debt, compare interest and fees on every existing balance, check whether the new term is longer, and avoid rebuilding balances that have been paid off. A lower monthly payment can still cost more in total if repayment stretches over many additional months.', 'Use the schedule as a planning aid and save the CSV if it helps you compare scenarios. Confirm the exact loan offer, repayment dates and early settlement terms with the lender. If a payment would strain your budget under a small rate or income change, consider a smaller amount or wait until you have a clearer repayment plan.', 'Keep a copy of the lender’s key facts alongside your scenario: net amount disbursed, total amount repayable, annual rate, all fees and the date each installment is due. Looking at those details together prevents a low headline payment from hiding the actual cost. If you are borrowing for an emergency, compare repayment against your expected monthly cash flow and consider whether a repayment buffer is possible. A manageable term is one you can sustain without depending on an optimistic income change.'] }
 ];
-export default function PersonalLoanPage() { const schema = structuredData('/personal-loan-emi-calculator/', title, description, faq); return <><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} /><section className="page-hero"><div className="page-hero-inner"><span className="eyebrow">PERSONAL FINANCE, MADE CLEAR</span><h1>Personal Loan EMI Calculator</h1><p>Estimate your installment and total borrowing cost before you apply. Compare rates, terms and prepayment options.</p><div className="page-badges"><span>Plan a realistic repayment</span><span>View a monthly schedule</span></div></div></section><div className="main-wrap"><Calculator preset={{ amount: 500000, rate: 13, years: 3, currency: 'INR' }} /><Article title="A practical guide to personal loan EMI" sections={sections} faq={faq} /></div></>; }
+export default function PersonalLoanPage() {
+  const schema = structuredData('/personal-loan-emi-calculator/', title, description, faq);
+  return (
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
+      <div className="utility-top-bar">
+        <div className="utility-top-inner">
+          <div className="tool-title-group">
+            <h1>Personal Loan EMI Calculator</h1>
+            <p>Calculate your personal loan monthly installments, interest charges and total loan cost.</p>
+          </div>
+          <div className="loan-type-tabs" role="tablist" aria-label="Loan types">
+            <Link href="/" className="loan-tab">All Loans</Link>
+            <Link href="/home-loan-emi-calculator/" className="loan-tab">Home Loan</Link>
+            <Link href="/car-loan-emi-calculator/" className="loan-tab">Car Loan</Link>
+            <Link href="/personal-loan-emi-calculator/" className="loan-tab active" aria-selected="true">Personal Loan</Link>
+          </div>
+        </div>
+      </div>
+      <div className="main-wrap">
+        <div className="calculator-wrapper">
+          <Calculator preset={{ amount: 500000, rate: 13, years: 3, currency: 'INR' }} />
+        </div>
+        <Article title="A practical guide to personal loan EMI" sections={sections} faq={faq} />
+      </div>
+    </>
+  );
+}

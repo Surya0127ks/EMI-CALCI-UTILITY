@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { Calculator } from '@/components/calculator';
 import { Article, type Faq, type Section } from '@/components/content';
 import { metadataFor, structuredData } from '@/lib/seo';
@@ -21,4 +22,31 @@ const sections: Section[] = [
   { title: 'Compare rate, term and total ownership budget', paragraphs: ['The annual interest rate has a direct effect on the installment and total borrowing cost. Compare the effective rate, fees, required insurance and whether the rate can reset. A flat-rate quote may calculate interest using the original principal throughout, while a reducing-balance loan charges against the unpaid amount. Ask the lender which method applies before comparing percentages.', 'A longer term can make the car payment appear more manageable, but it usually increases total interest and may leave you owing more than the vehicle is worth for longer. A shorter term costs more each month but typically clears principal faster. Balance the loan payment with insurance, fuel or charging, servicing, repairs and depreciation. A payment that fits only before those expenses may not be sustainable.', 'Try a few scenarios with one changed variable at a time. A larger down payment reduces principal. A lower rate can reduce both EMI and lifetime interest. Moving from five to six years may reduce the scheduled monthly amount but usually increases total paid. Focus on the full ownership budget, not only the number shown in an advertisement.'] },
   { title: 'Prepayment and a smarter purchase plan', paragraphs: ['Extra principal payments can reduce the balance earlier and lower interest over the remaining term. Use the monthly or one-time extra payment controls to explore the possible savings. The model assumes the lender accepts the full extra amount as principal without a penalty. Some auto loans restrict early settlement, charge fees or recalculate the installment instead of shortening the term.', 'Before committing, request a written amortization schedule and ask about early repayment, late fees, rate type, balloon or residual payments and any final settlement amount. Check whether dealer incentives require financing through a particular lender and compare the complete cost against outside offers. Keep a reasonable savings buffer rather than putting every available amount toward a down payment.', 'This tool is for planning, not a quote or approval. Use the downloadable schedule for personal comparison and confirm the exact repayment terms directly with the lender. A disciplined comparison can help you choose a vehicle and loan that leave room for the rest of your monthly priorities.', 'It is useful to test a few realistic purchase prices before visiting a showroom. A slightly less expensive model, a carefully chosen used vehicle or a larger deposit can change the required principal far more than a small adjustment to the repayment term. Compare the estimated interest saved with the cash you would need to keep available for maintenance and emergencies. If you trade in a vehicle, check whether any outstanding balance is being added to the new financing; rolling old debt into a new agreement increases the amount on which interest is charged.'] }
 ];
-export default function CarLoanPage() { const schema = structuredData('/car-loan-emi-calculator/', title, description, faq); return <><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} /><section className="page-hero"><div className="page-hero-inner"><span className="eyebrow">CAR FINANCING, MADE CLEAR</span><h1>Car Loan EMI Calculator</h1><p>See what a vehicle loan could cost each month, compare terms and plan around the full cost of ownership.</p><div className="page-badges"><span>Compare down payments</span><span>Explore total interest</span></div></div></section><div className="main-wrap"><Calculator preset={{ amount: 1500000, rate: 9, years: 5, currency: 'INR' }} /><Article title="A practical guide to car loan EMI" sections={sections} faq={faq} /></div></>; }
+export default function CarLoanPage() {
+  const schema = structuredData('/car-loan-emi-calculator/', title, description, faq);
+  return (
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
+      <div className="utility-top-bar">
+        <div className="utility-top-inner">
+          <div className="tool-title-group">
+            <h1>Car Loan EMI Calculator</h1>
+            <p>Calculate your vehicle loan monthly payments, interest and down-payment scenarios.</p>
+          </div>
+          <div className="loan-type-tabs" role="tablist" aria-label="Loan types">
+            <Link href="/" className="loan-tab">All Loans</Link>
+            <Link href="/home-loan-emi-calculator/" className="loan-tab">Home Loan</Link>
+            <Link href="/car-loan-emi-calculator/" className="loan-tab active" aria-selected="true">Car Loan</Link>
+            <Link href="/personal-loan-emi-calculator/" className="loan-tab">Personal Loan</Link>
+          </div>
+        </div>
+      </div>
+      <div className="main-wrap">
+        <div className="calculator-wrapper">
+          <Calculator preset={{ amount: 1500000, rate: 9, years: 5, currency: 'INR' }} />
+        </div>
+        <Article title="A practical guide to car loan EMI" sections={sections} faq={faq} />
+      </div>
+    </>
+  );
+}

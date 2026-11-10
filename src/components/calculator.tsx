@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { ArrowDownToLine, Calculator as CalculatorIcon, Check, Copy, RotateCcw, Share2, Sparkles, TrendingUp } from 'lucide-react';
+import { ArrowDownToLine, Calculator as CalculatorIcon, Check, Copy, RotateCcw, Share2, TrendingUp } from 'lucide-react';
 import { buildSchedule, calculateEmi, formatMoney, formatAmountReadable } from '@/lib/finance';
 import { CURRENCIES, type Currency } from '@/lib/config';
 import { AdSlot } from './ads';
@@ -112,12 +112,9 @@ export function Calculator({ preset = defaults }: { preset?: CalculatorPreset })
     <>
       <section className="calculator-card" aria-label="Loan EMI calculator">
         <div className="calc-heading">
-          <div>
-            <span className="eyebrow"><Sparkles size={14} /> SIMPLE &amp; ACCURATE</span>
-            <h2>Loan details</h2>
-          </div>
+          <h2>Loan Details</h2>
           <button className="reset-button" onClick={reset} aria-label="Reset calculator to defaults">
-            <RotateCcw size={15} />
+            <RotateCcw size={14} />
             <span>Reset</span>
           </button>
         </div>
