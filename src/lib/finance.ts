@@ -34,3 +34,23 @@ export function formatMoney(value: number, currency: string): string {
   try { return new Intl.NumberFormat(locales[currency] ?? 'en-US', { style: 'currency', currency, maximumFractionDigits: 0 }).format(value); }
   catch { return `${currency} ${Math.round(value).toLocaleString()}`; }
 }
+
+export function formatAmountReadable(amount: number, currency: string): string {
+  if (amount <= 0) return '';
+  if (currency === 'INR') {
+    if (amount >= 10000000) {
+      const cr = (amount / 10000000).toFixed(2).replace(/\.00$/, '');
+      return `${cr} Crore`;
+    }
+    if (amount >= 100000) {
+      const lakh = (amount / 100000).toFixed(2).replace(/\.00$/, '');
+      return `${lakh} Lakh`;
+    }
+    if (amount >= 1000) {
+      const k = (amount / 1000).toFixed(1).replace(/\.0$/, '');
+      return `${k}k`;
+    }
+    return `₹${amount.toLocaleString('en-IN')}`;
+  }
+  return formatMoney(amount, currency);
+}

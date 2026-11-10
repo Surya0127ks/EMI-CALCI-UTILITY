@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { ArrowDown, ArrowDownToLine, Calculator as CalculatorIcon, Check, Copy, RotateCcw, Share2, Sparkles } from 'lucide-react';
-import { buildSchedule, calculateEmi, formatMoney } from '@/lib/finance';
+import { ArrowDown, ArrowDownToLine, Calculator as CalculatorIcon, Check, Copy, RotateCcw, Share2, Sparkles, TrendingUp } from 'lucide-react';
+import { buildSchedule, calculateEmi, formatMoney, formatAmountReadable } from '@/lib/finance';
 import { CURRENCIES, type Currency } from '@/lib/config';
 import { AdSlot } from './ads';
 
@@ -74,13 +74,48 @@ export function Calculator({ preset = defaults }: { preset?: CalculatorPreset })
     const summary = `EMI estimate: ${money(emi)} per month for ${months} months at ${rate}% annual interest.`;
     await navigator.clipboard.writeText(summary); setCopied(true); window.setTimeout(() => setCopied(false), 1800);
   }
+
+  const amountReadable = formatAmountReadable(amount, currency);
+
   return <>
     <section className="calculator-card" aria-label="Loan EMI calculator">
-      <div className="calc-heading"><div><span className="eyebrow"><Sparkles size={13} /> YOUR LOAN, MADE CLEAR</span><h2>Loan details</h2></div><button className="reset-button" onClick={reset} aria-label="Reset calculator"><RotateCcw size={15} /> Reset</button></div>
+      <div className="calc-heading">
+        <div>
+          <span className="eyebrow"><Sparkles size={14} /> YOUR LOAN, MADE CLEAR</span>
+          <h2>Loan details</h2>
+        </div>
+        <button className="reset-button" onClick={reset} aria-label="Reset calculator to defaults">
+          <RotateCcw size={15} />
+          <span>Reset</span>
+        </button>
+      </div>
+
       <div className="calc-grid">
         <div className="inputs-column">
-          <Field label="Loan amount" suffix={currency} value={amount} min={100} max={50000000} step={100} onChange={setAmount} presets={[100000, 500000, 1000000, 2500000, 5000000, 10000000]} />
-          <Field label="Annual interest rate" suffix="% p.a." value={rate} min={0} max={30} step={0.05} decimals onChange={setRate} presets={[7.5, 8.5, 9.5, 10.5, 12]} />
+          <Field
+            label="Loan amount"
+            suffix={currency}
+            value={amount}
+            min={100}
+            max={50000000}
+            step={100}
+            badgeText={amountReadable}
+            onChange={setAmount}
+            presets={[100000, 500000, 1000000, 2500000, 5000000, 10000000]}
+          />
+
+          <Field
+            label="Annual interest rate"
+            suffix="% p.a."
+            value={rate}
+            min={0}
+            max={30}
+            step={0.05}
+            decimals
+            onChange={setRate}
+            presets={[7.5, 8.5, 9.5, 10.5, 12]}
+          />
+
           <div className="field-block">
             <div className="field-label">
               <label htmlFor="tenure">Loan tenure</label>
@@ -91,40 +126,175 @@ export function Calculator({ preset = defaults }: { preset?: CalculatorPreset })
             </div>
             <div className="number-wrap">
               <input id="tenure" aria-label="Loan tenure" type="number" min={1} max={unit === 'years' ? 40 : 480} value={tenure} onChange={(event) => setTenure(Math.max(1, Number(event.target.value)))} />
-              <span>{unit}</span>
+              <span className="input-badge">{unit}</span>
             </div>
             <input className="range" aria-label="Adjust loan tenure" type="range" min={1} max={unit === 'years' ? 40 : 480} value={tenure} onChange={(event) => setTenure(Number(event.target.value))} />
             <div className="quick-presets" aria-label="Quick tenure presets">
               {(unit === 'years' ? [5, 10, 15, 20, 25, 30] : [12, 24, 36, 60, 120, 240]).map((t) => (
                 <button key={t} type="button" className={`quick-chip ${tenure === t ? 'active' : ''}`} onClick={() => setTenure(t)}>
-                  {t} {unit === 'years' ? 'Yrs' : 'Mos'}
+                  {t} {unit === 'years' ? 'Years' : 'Months'}
                 </button>
               ))}
             </div>
           </div>
-          <label className="field-block currency-field"><span className="field-label">Display currency</span><select value={currency} onChange={(event) => setCurrency(event.target.value as Currency)}>{CURRENCIES.map((code) => <option key={code} value={code}>{code}</option>)}</select></label>
-          <details className="prepayment"><summary>Include an extra payment <span>Optional</span></summary><div className="extra-grid"><label>Extra each month<input type="number" min="0" value={extra} onChange={(e) => setExtra(Math.max(0, Number(e.target.value)))} /></label><label>One-time payment<input type="number" min="0" value={lump} onChange={(e) => setLump(Math.max(0, Number(e.target.value)))} /></label></div></details>
+
+          <label className="field-block currency-field">
+            <span className="field-label">Display currency</span>
+            <select value={currency} onChange={(event) => setCurrency(event.target.value as Currency)}>
+              {CURRENCIES.map((code) => <option key={code} value={code}>{code}</option>)}
+            </select>
+          </label>
+
+          <details className="prepayment">
+            <summary>Include an extra payment <span>Optional</span></summary>
+            <div className="extra-grid">
+              <label>Extra each month<input type="number" min="0" value={extra} onChange={(e) => setExtra(Math.max(0, Number(e.target.value)))} /></label>
+              <label>One-time payment<input type="number" min="0" value={lump} onChange={(e) => setLump(Math.max(0, Number(e.target.value)))} /></label>
+            </div>
+          </details>
+
           <button type="button" className="calculate-btn" onClick={handleCalculate} aria-label="Calculate EMI and jump to output">
-            <CalculatorIcon size={18} />
+            <CalculatorIcon size={20} />
             <span>Calculate EMI &amp; View Result</span>
-            <ArrowDown size={18} className="calc-arrow-icon" />
+            <ArrowDown size={19} className="calc-arrow-icon" />
           </button>
         </div>
+
         <div ref={resultRef} className={`result-panel ${highlightResult ? 'result-highlight' : ''}`} id="emi-result-panel">
-          <div className="result-top"><div><span className="result-label">ESTIMATED MONTHLY EMI</span><p className="emi-value">{money(emi)}</p></div><span className="result-icon">₹</span></div>
-          <div className="result-lines"><Metric label="Principal amount" value={money(amount)} /><Metric label="Total interest" value={money(totalInterest)} /><Metric label="Total payment" value={money(totalPayment)} /></div>
-          <div className="ratio"><div className="donut" role="img" aria-label={`Principal ${Math.round((1 - interestRatio) * 100)} percent, interest ${Math.round(interestRatio * 100)} percent`} style={{ background: `conic-gradient(var(--accent) 0% ${(1 - interestRatio) * 100}%, #facb83 ${(1 - interestRatio) * 100}% 100%)` }}><span>{Math.round(interestRatio * 100)}<small>% interest</small></span></div><div className="legend"><span><i className="principal-dot" />Principal <b>{Math.round((1 - interestRatio) * 100)}%</b></span><span><i className="interest-dot" />Interest <b>{Math.round(interestRatio * 100)}%</b></span></div></div>
-          {(extra > 0 || lump > 0) && <div className="savings"><strong>With your extra payments</strong><span>{money(savedInterest)} interest saved</span><span>{monthsSaved} months sooner</span></div>}
-          <div className="result-actions"><button className="button button-primary" onClick={share}><Share2 size={16} /> Share result</button><button className="button button-outline" onClick={copyResult} aria-label="Copy EMI result">{copied ? <Check size={16} /> : <Copy size={16} />}{copied ? 'Copied' : 'Copy'}</button></div>
+          <div className="result-top">
+            <div>
+              <div className="result-badge-wrap">
+                <span className="live-dot" />
+                <span className="result-label">ESTIMATED MONTHLY EMI</span>
+              </div>
+              <p className="emi-value">{money(emi)}</p>
+              <span className="emi-sub-context">for {tenure} {unit} @ {rate}% p.a.</span>
+            </div>
+            <div className="result-icon-box">
+              <span className="result-icon">₹</span>
+            </div>
+          </div>
+
+          <div className="result-lines">
+            <Metric label="Principal amount" value={money(amount)} colorDot="var(--accent)" />
+            <Metric label="Total interest payable" value={money(totalInterest)} colorDot="var(--orange)" />
+            <Metric label="Total payment (Principal + Interest)" value={money(totalPayment)} colorDot="var(--text-muted)" isTotal />
+          </div>
+
+          <div className="ratio">
+            <div className="donut" role="img" aria-label={`Principal ${Math.round((1 - interestRatio) * 100)} percent, interest ${Math.round(interestRatio * 100)} percent`} style={{ background: `conic-gradient(var(--accent) 0% ${(1 - interestRatio) * 100}%, var(--orange) ${(1 - interestRatio) * 100}% 100%)` }}>
+              <span>{Math.round(interestRatio * 100)}%<small>Interest</small></span>
+            </div>
+            <div className="legend">
+              <span className="legend-item"><i className="principal-dot" />Principal <b>{Math.round((1 - interestRatio) * 100)}%</b></span>
+              <span className="legend-item"><i className="interest-dot" />Interest <b>{Math.round(interestRatio * 100)}%</b></span>
+            </div>
+          </div>
+
+          {(extra > 0 || lump > 0) && (
+            <div className="savings">
+              <div className="savings-title">
+                <TrendingUp size={16} />
+                <strong>With your extra payments:</strong>
+              </div>
+              <div className="savings-stats">
+                <span><strong>{money(savedInterest)}</strong> interest saved</span>
+                <span><strong>{monthsSaved}</strong> months sooner</span>
+              </div>
+            </div>
+          )}
+
+          <div className="result-actions">
+            <button className="button button-primary" onClick={share}>
+              <Share2 size={17} />
+              <span>Share result</span>
+            </button>
+            <button className="button button-outline" onClick={copyResult} aria-label="Copy EMI result">
+              {copied ? <Check size={17} /> : <Copy size={17} />}
+              <span>{copied ? 'Copied' : 'Copy'}</span>
+            </button>
+          </div>
         </div>
       </div>
-      <div className="schedule"><div className="schedule-heading"><div><h3>Payment schedule</h3><p>See how each payment reduces your balance.</p></div><button className="download-button" onClick={downloadCsv}><ArrowDownToLine size={16} /> Download CSV</button></div><button className="table-toggle" aria-expanded={expanded} onClick={() => setExpanded(!expanded)}>{expanded ? 'Hide' : 'View'} amortization table <span>{expanded ? '−' : '+'}</span></button>{expanded && <><div className="schedule-tabs" role="group" aria-label="Schedule grouping"><button aria-pressed={scheduleView === 'monthly'} onClick={() => setScheduleView('monthly')}>Month by month</button><button aria-pressed={scheduleView === 'yearly'} onClick={() => setScheduleView('yearly')}>Year summary</button></div><div className="table-scroll"><table><thead><tr><th>{scheduleView === 'monthly' ? 'Month' : 'Year'}</th>{scheduleView === 'monthly' && <th>Year</th>}<th>Payment</th><th>Principal</th><th>Interest</th><th>Balance</th></tr></thead><tbody>{(scheduleView === 'monthly' ? base : yearly).map((row) => <tr key={row.month}><td>{scheduleView === 'monthly' ? row.month : `Year ${row.year}`}</td>{scheduleView === 'monthly' && <td>{row.year}</td>}<td>{money(row.payment)}</td><td>{money(row.principal)}</td><td>{money(row.interest)}</td><td>{money(row.balance)}</td></tr>)}</tbody></table></div></>}</div>
+
+      <div className="schedule">
+        <div className="schedule-heading">
+          <div>
+            <h3>Payment schedule &amp; Amortization</h3>
+            <p>See how each monthly payment steadily reduces your principal balance over time.</p>
+          </div>
+          <button className="download-button" onClick={downloadCsv}>
+            <ArrowDownToLine size={16} />
+            <span>Download CSV</span>
+          </button>
+        </div>
+        <button className="table-toggle" aria-expanded={expanded} onClick={() => setExpanded(!expanded)}>
+          <span>Amortization breakdown ({expanded ? 'Hide table' : 'View full table'})</span>
+          <span className="table-toggle-icon">{expanded ? '−' : '+'}</span>
+        </button>
+        {expanded && (
+          <>
+            <div className="schedule-tabs" role="group" aria-label="Schedule grouping">
+              <button aria-pressed={scheduleView === 'monthly'} onClick={() => setScheduleView('monthly')}>Month by month</button>
+              <button aria-pressed={scheduleView === 'yearly'} onClick={() => setScheduleView('yearly')}>Year summary</button>
+            </div>
+            <div className="table-scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th>{scheduleView === 'monthly' ? 'Month' : 'Year'}</th>
+                    {scheduleView === 'monthly' && <th>Year</th>}
+                    <th>Payment</th>
+                    <th>Principal</th>
+                    <th>Interest</th>
+                    <th>Balance</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(scheduleView === 'monthly' ? base : yearly).map((row) => (
+                    <tr key={row.month}>
+                      <td>{scheduleView === 'monthly' ? row.month : `Year ${row.year}`}</td>
+                      {scheduleView === 'monthly' && <td>{row.year}</td>}
+                      <td>{money(row.payment)}</td>
+                      <td>{money(row.principal)}</td>
+                      <td>{money(row.interest)}</td>
+                      <td>{money(row.balance)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
+      </div>
     </section>
     <AdSlot slot={process.env.NEXT_PUBLIC_ADSENSE_SLOT_TOOL ?? ''} format="auto" />
   </>;
 }
 
-function Field({ label, suffix, value, min, max, step, decimals, presets, onChange }: { label: string; suffix: string; value: number; min: number; max: number; step: number; decimals?: boolean; presets?: number[]; onChange: (value: number) => void }) {
+function Field({
+  label,
+  suffix,
+  value,
+  min,
+  max,
+  step,
+  decimals,
+  presets,
+  badgeText,
+  onChange
+}: {
+  label: string;
+  suffix: string;
+  value: number;
+  min: number;
+  max: number;
+  step: number;
+  decimals?: boolean;
+  presets?: number[];
+  badgeText?: string;
+  onChange: (value: number) => void;
+}) {
   const formatChip = (val: number) => {
     if (decimals) return `${val}%`;
     if (val >= 10000000) return `₹${val / 10000000} Cr`;
@@ -132,25 +302,71 @@ function Field({ label, suffix, value, min, max, step, decimals, presets, onChan
     return `₹${val}`;
   };
 
-  return <div className="field-block">
-    <div className="field-label"><label htmlFor={label.replaceAll(' ', '-')}>{label}</label></div>
-    <div className="number-wrap"><input id={label.replaceAll(' ', '-')} type="number" min={min} max={max} step={step} value={value} onChange={(event) => onChange(Math.min(max, Math.max(min, Number(event.target.value))))} /><span>{suffix}</span></div>
-    <input className="range" aria-label={`Adjust ${label.toLowerCase()}`} type="range" min={min} max={max} step={step} value={value} onChange={(event) => onChange(Number(event.target.value))} />
-    {presets && (
-      <div className="quick-presets" aria-label={`Quick ${label.toLowerCase()} presets`}>
-        {presets.map((presetVal) => (
-          <button
-            key={presetVal}
-            type="button"
-            className={`quick-chip ${value === presetVal ? 'active' : ''}`}
-            onClick={() => onChange(presetVal)}
-          >
-            {formatChip(presetVal)}
-          </button>
-        ))}
+  return (
+    <div className="field-block">
+      <div className="field-label">
+        <label htmlFor={label.replaceAll(' ', '-')}>{label}</label>
+        {badgeText && <span className="field-value-badge">{badgeText}</span>}
       </div>
-    )}
-    {decimals && <p className="field-hint">Enter the nominal yearly rate offered by your lender.</p>}
-  </div>;
+      <div className="number-wrap">
+        <input
+          id={label.replaceAll(' ', '-')}
+          type="number"
+          min={min}
+          max={max}
+          step={step}
+          value={value}
+          onChange={(event) => onChange(Math.min(max, Math.max(min, Number(event.target.value))))}
+        />
+        <span className="input-badge">{suffix}</span>
+      </div>
+      <input
+        className="range"
+        aria-label={`Adjust ${label.toLowerCase()}`}
+        type="range"
+        min={min}
+        max={max}
+        step={step}
+        value={value}
+        onChange={(event) => onChange(Number(event.target.value))}
+      />
+      {presets && (
+        <div className="quick-presets" aria-label={`Quick ${label.toLowerCase()} presets`}>
+          {presets.map((presetVal) => (
+            <button
+              key={presetVal}
+              type="button"
+              className={`quick-chip ${value === presetVal ? 'active' : ''}`}
+              onClick={() => onChange(presetVal)}
+            >
+              {formatChip(presetVal)}
+            </button>
+          ))}
+        </div>
+      )}
+      {decimals && <p className="field-hint">Enter the nominal yearly rate offered by your lender.</p>}
+    </div>
+  );
 }
-function Metric({ label, value }: { label: string; value: string }) { return <div className="metric"><span>{label}</span><strong>{value}</strong></div>; }
+
+function Metric({
+  label,
+  value,
+  colorDot,
+  isTotal
+}: {
+  label: string;
+  value: string;
+  colorDot?: string;
+  isTotal?: boolean;
+}) {
+  return (
+    <div className={`metric ${isTotal ? 'metric-total' : ''}`}>
+      <div className="metric-left">
+        {colorDot && <span className="metric-color-dot" style={{ backgroundColor: colorDot }} />}
+        <span>{label}</span>
+      </div>
+      <strong>{value}</strong>
+    </div>
+  );
+}
