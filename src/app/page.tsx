@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { Calculator } from '@/components/calculator';
 import { Article, generalFaq, generalSections } from '@/components/content';
 import { metadataFor, structuredData } from '@/lib/seo';
@@ -17,12 +16,6 @@ export default function HomePage() {
           <div className="tool-title-group">
             <h1>Loan EMI Calculator</h1>
             <p>Calculate your monthly loan payments, total interest and complete amortization schedule.</p>
-          </div>
-          <div className="loan-type-tabs" role="tablist" aria-label="Loan types">
-            <Link href="/" className="loan-tab active" aria-selected="true">All Loans</Link>
-            <Link href="/home-loan-emi-calculator/" className="loan-tab">Home Loan</Link>
-            <Link href="/car-loan-emi-calculator/" className="loan-tab">Car Loan</Link>
-            <Link href="/personal-loan-emi-calculator/" className="loan-tab">Personal Loan</Link>
           </div>
         </div>
       </div>

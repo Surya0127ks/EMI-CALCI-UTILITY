@@ -33,12 +33,6 @@ export default function PersonalLoanPage() {
             <h1>Personal Loan EMI Calculator</h1>
             <p>Calculate your personal loan monthly installments, interest charges and total loan cost.</p>
           </div>
-          <div className="loan-type-tabs" role="tablist" aria-label="Loan types">
-            <Link href="/" className="loan-tab">All Loans</Link>
-            <Link href="/home-loan-emi-calculator/" className="loan-tab">Home Loan</Link>
-            <Link href="/car-loan-emi-calculator/" className="loan-tab">Car Loan</Link>
-            <Link href="/personal-loan-emi-calculator/" className="loan-tab active" aria-selected="true">Personal Loan</Link>
-          </div>
         </div>
       </div>
       <div className="main-wrap">
