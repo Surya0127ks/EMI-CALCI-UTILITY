@@ -8,6 +8,17 @@ import { AdSlot } from './ads';
 export type CalculatorPreset = { amount: number; rate: number; years: number; currency?: Currency; label?: string };
 const defaults: CalculatorPreset = { amount: 5000000, rate: 8.5, years: 20, currency: 'INR' };
 
+const currencySymbols: Record<Currency, string> = {
+  INR: '₹',
+  USD: '$',
+  EUR: '€',
+  GBP: '£',
+  AED: 'AED',
+  CAD: 'C$',
+  AUD: 'A$',
+  SGD: 'S$'
+};
+
 /** Interactive calculator: clean, user-centric, and focused on essential inputs. */
 export function Calculator({ preset = defaults }: { preset?: CalculatorPreset }) {
   const initial = { ...defaults, ...preset };
@@ -77,12 +88,12 @@ export function Calculator({ preset = defaults }: { preset?: CalculatorPreset })
 
   function handleCalculate() {
     setHasCalculated(true);
-    // On mobile, gently center the result panel on screen so user sees it instantly
+    // On mobile, smoothly glide the result panel into view just below the sticky header
     setTimeout(() => {
       if (resultRef.current && window.innerWidth <= 860) {
-        resultRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        resultRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
-    }, 80);
+    }, 50);
   }
 
   function downloadCsv() {
@@ -130,19 +141,36 @@ export function Calculator({ preset = defaults }: { preset?: CalculatorPreset })
                 <input
                   id="loan-amount"
                   type="number"
-                  min={100}
-                  max={50000000}
-                  step={100}
-                  value={amount}
-                  onChange={(e) => setAmount(Math.min(50000000, Math.max(100, Number(e.target.value))))}
+                  min={0}
+                  max={500000000}
+                  step={1000}
+                  value={amount === 0 ? '' : amount}
+                  placeholder="0"
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (val === '') setAmount(0);
+                    else {
+                      const n = Number(val);
+                      if (!isNaN(n)) setAmount(Math.max(0, Math.min(500000000, n)));
+                    }
+                  }}
                 />
-                <span className="input-badge">{currency}</span>
+                <select
+                  className="currency-select-inline"
+                  value={currency}
+                  onChange={(e) => setCurrency(e.target.value as Currency)}
+                  aria-label="Select currency"
+                >
+                  {CURRENCIES.map((code) => (
+                    <option key={code} value={code}>{code}</option>
+                  ))}
+                </select>
               </div>
               <input
                 className="range"
                 aria-label="Adjust loan amount"
                 type="range"
-                min={100}
+                min={0}
                 max={20000000}
                 step={10000}
                 value={amount}
@@ -160,11 +188,19 @@ export function Calculator({ preset = defaults }: { preset?: CalculatorPreset })
                 <input
                   id="interest-rate"
                   type="number"
-                  min={0.1}
+                  min={0}
                   max={30}
                   step={0.1}
-                  value={rate}
-                  onChange={(e) => setRate(Math.min(30, Math.max(0, Number(e.target.value))))}
+                  value={rate === 0 ? '' : rate}
+                  placeholder="0"
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (val === '') setRate(0);
+                    else {
+                      const n = Number(val);
+                      if (!isNaN(n)) setRate(Math.max(0, Math.min(30, n)));
+                    }
+                  }}
                 />
                 <span className="input-badge">% p.a.</span>
               </div>
@@ -172,7 +208,7 @@ export function Calculator({ preset = defaults }: { preset?: CalculatorPreset })
                 className="range"
                 aria-label="Adjust annual interest rate"
                 type="range"
-                min={1}
+                min={0}
                 max={25}
                 step={0.1}
                 value={rate}
@@ -196,8 +232,16 @@ export function Calculator({ preset = defaults }: { preset?: CalculatorPreset })
                   type="number"
                   min={1}
                   max={unit === 'years' ? 40 : 480}
-                  value={tenure}
-                  onChange={(e) => setTenure(Math.max(1, Number(e.target.value)))}
+                  value={tenure === 0 ? '' : tenure}
+                  placeholder="1"
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (val === '') setTenure(0);
+                    else {
+                      const n = Number(val);
+                      if (!isNaN(n)) setTenure(Math.max(0, Math.min(unit === 'years' ? 50 : 600, n)));
+                    }
+                  }}
                 />
                 <span className="input-badge">{unit}</span>
               </div>
@@ -212,27 +256,39 @@ export function Calculator({ preset = defaults }: { preset?: CalculatorPreset })
               />
             </div>
 
-            {/* Optional Currency & Prepayment Toggle */}
+            {/* Optional Prepayment Toggle */}
             <div className="optional-tools">
               <button
                 type="button"
                 className="optional-toggle-btn"
                 onClick={() => setShowAdvanced(!showAdvanced)}
               >
-                {showAdvanced ? '− Hide optional settings' : '+ Currency & Prepayment (Optional)'}
+                {showAdvanced ? '− Hide prepayment settings' : '+ Extra Prepayment (Optional)'}
               </button>
 
               {showAdvanced && (
                 <div className="advanced-box">
-                  <label className="field-block">
-                    <span className="field-label">Display currency</span>
-                    <select value={currency} onChange={(e) => setCurrency(e.target.value as Currency)}>
-                      {CURRENCIES.map((code) => <option key={code} value={code}>{code}</option>)}
-                    </select>
-                  </label>
                   <div className="extra-grid">
-                    <label>Extra monthly payment<input type="number" min="0" value={extra} onChange={(e) => setExtra(Math.max(0, Number(e.target.value)))} placeholder="0" /></label>
-                    <label>One-time payment<input type="number" min="0" value={lump} onChange={(e) => setLump(Math.max(0, Number(e.target.value)))} placeholder="0" /></label>
+                    <label>
+                      Extra monthly payment
+                      <input
+                        type="number"
+                        min="0"
+                        value={extra === 0 ? '' : extra}
+                        onChange={(e) => setExtra(Math.max(0, Number(e.target.value)))}
+                        placeholder="0"
+                      />
+                    </label>
+                    <label>
+                      One-time lump sum
+                      <input
+                        type="number"
+                        min="0"
+                        value={lump === 0 ? '' : lump}
+                        onChange={(e) => setLump(Math.max(0, Number(e.target.value)))}
+                        placeholder="0"
+                      />
+                    </label>
                   </div>
                 </div>
               )}
@@ -272,7 +328,7 @@ export function Calculator({ preset = defaults }: { preset?: CalculatorPreset })
                     <span className="emi-sub-context">for {tenure} {unit} @ {rate}% p.a.</span>
                   </div>
                   <div className="result-icon-box">
-                    <span className="result-icon">₹</span>
+                    <span className="result-icon">{currencySymbols[currency] ?? '₹'}</span>
                   </div>
                 </div>
 
