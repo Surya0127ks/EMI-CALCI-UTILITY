@@ -77,14 +77,6 @@ export function Calculator({ preset = defaults }: { preset?: CalculatorPreset })
 
   function handleCalculate() {
     setHasCalculated(true);
-    // Smooth gentle scroll only on mobile screens if the result is below the viewport
-    setTimeout(() => {
-      if (resultRef.current && window.innerWidth <= 860) {
-        const rect = resultRef.current.getBoundingClientRect();
-        const targetY = window.scrollY + rect.top - 80;
-        window.scrollTo({ top: targetY, behavior: 'smooth' });
-      }
-    }, 60);
   }
 
   function downloadCsv() {

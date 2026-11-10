@@ -475,7 +475,11 @@ input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer
   padding: 22px 24px;
 }
 .result-revealed {
-  animation: none;
+  animation: calcFadeIn 0.2s ease-out;
+}
+@keyframes calcFadeIn {
+  from { opacity: 0.6; }
+  to { opacity: 1; }
 }
 .result-top {
   display: flex;
@@ -933,36 +937,58 @@ th:first-child, td:first-child { text-align: left; }
     text-align: center;
   }
 
-  .utility-top-bar { padding: 16px 0 0; }
-  .tool-title-group h1 { font-size: 20px; margin-bottom: 4px; }
-  .tool-title-group p { font-size: 13px; margin-bottom: 12px; }
-  .loan-tab { padding: 7px 12px; font-size: 13px; }
+  .utility-top-bar { padding: 12px 0 0; }
+  .tool-title-group h1 { font-size: 19px; margin-bottom: 2px; }
+  .tool-title-group p { font-size: 12.5px; margin-bottom: 8px; }
+  .loan-tab { padding: 6px 12px; font-size: 13px; }
 
-  .calculator-wrapper { margin-top: 14px; margin-bottom: 20px; }
-  .calculator-card { padding: 18px 14px; }
-  .calc-heading { margin-bottom: 16px; padding-bottom: 10px; }
-  .calc-heading h2 { font-size: 17px; }
+  .calculator-wrapper { margin-top: 10px; margin-bottom: 18px; }
+  .calculator-card { padding: 16px 12px; }
+  .calc-heading { margin-bottom: 12px; padding-bottom: 8px; }
+  .calc-heading h2 { font-size: 16px; }
 
-  .inputs-column { gap: 16px; }
-  .field-label { font-size: 13.5px; }
-  .field-hint-tag { font-size: 12.5px; }
-  .number-wrap { height: 42px; }
+  .inputs-column { gap: 13px; }
+  .field-label { font-size: 13px; margin-bottom: 5px; }
+  .field-hint-tag { font-size: 12px; }
+  .number-wrap { height: 40px; }
   .number-wrap input { font-size: 16px; } /* Prevent mobile Safari zoom */
-  .range { height: 6px; }
-  .range::-webkit-slider-thumb { width: 18px; height: 18px; }
-  .range::-moz-range-thumb { width: 18px; height: 18px; }
+  .range { height: 5px; margin: 8px 0 0; }
+  .range::-webkit-slider-thumb { width: 16px; height: 16px; }
+  .range::-moz-range-thumb { width: 16px; height: 16px; }
 
-  .calculate-btn { min-height: 44px; font-size: 15px; }
+  .calculate-btn { min-height: 42px; font-size: 14.5px; margin-top: 2px; }
 
-  .result-panel { padding: 16px 14px; margin-top: 4px; }
-  .emi-value { font-size: 28px; }
-  .metric { font-size: 13.5px; padding: 8px 0; }
-  .metric strong { font-size: 14.5px; }
-  .metric-total strong { font-size: 15.5px; }
-  .ratio { flex-direction: column; align-items: flex-start; gap: 14px; }
-  .ratio .donut { align-self: center; }
-  .result-actions { grid-template-columns: 1fr; gap: 8px; }
-  .result-actions .button { min-height: 42px; font-size: 14px; }
+  .result-panel { padding: 14px 12px; margin-top: 4px; }
+  .result-top { padding-bottom: 10px; }
+  .emi-value { font-size: 26px; }
+  .result-lines { margin: 10px 0; }
+  .metric { font-size: 13px; padding: 7px 0; }
+  .metric strong { font-size: 14px; }
+  .metric-total strong { font-size: 15px; }
+  .ratio {
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 16px;
+    padding: 10px 0 6px;
+  }
+  .ratio .donut {
+    width: 66px;
+    height: 66px;
+    flex: 0 0 auto;
+  }
+  .ratio .donut::before {
+    width: 48px;
+    height: 48px;
+  }
+  .ratio .donut span {
+    font-size: 13px;
+  }
+  .ratio .donut small {
+    font-size: 8px;
+  }
+  .result-actions { grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+  .result-actions .button { min-height: 38px; font-size: 13px; }
 
   .schedule h3 { font-size: 16px; }
   .download-button { font-size: 12px; padding: 6px 10px; }
